@@ -7,9 +7,6 @@ use thiserror::Error;
 pub enum StorageError {
     #[error("数据库操作失败: {0}")]
     Sled(#[from] sled::Error),
-
-    #[error("数据不存在: id: {id}")]
-    NotFound{ id: u64 },
 }
 
 
@@ -26,5 +23,13 @@ impl Storage {
         Ok(
             Storage { list_tree, item_tree, db }
         )
+    }
+    ///创建列表id
+    fn create_id_list(&self) -> Result<u64, StorageError> {
+        Ok(self.db.generate_id()?)
+    }
+    ///创建项id
+    fn create_id_item(&self, list_id: u64) -> Result<(u64, u64), StorageError> {
+        Ok((list_id, self.db.generate_id()?))
     }
 }
