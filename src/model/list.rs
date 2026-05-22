@@ -2,7 +2,7 @@ use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
 
-///列表存储数据结构
+///列表属性
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
 pub struct TodoListData {
     ///列表id
