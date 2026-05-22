@@ -24,12 +24,16 @@ impl Storage {
             Storage { list_tree, item_tree, db }
         )
     }
+    
     ///创建列表id
     fn create_id_list(&self) -> Result<u64, StorageError> {
         Ok(self.db.generate_id()?)
     }
+    
     ///创建项id
     fn create_id_item(&self, list_id: u64) -> Result<(u64, u64), StorageError> {
         Ok((list_id, self.db.generate_id()?))
     }
+
+    
 }
