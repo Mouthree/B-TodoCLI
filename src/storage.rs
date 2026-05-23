@@ -48,7 +48,7 @@ impl Storage {
         let id = item.id;
         let id = [id.0.to_be_bytes(), id.1.to_be_bytes()].concat();
         let item = serde_json::to_vec(item)?;
-        self.list_tree.insert(id, item)?;
+        self.item_tree.insert(id, item)?;
         Ok(())
     }
 
