@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 ///列表属性
 #[derive(Debug, Clone, Serialize, Deserialize, Builder)]
-pub struct TodoListData {
+pub struct ListData {
     ///列表id
     pub id: u64,
     ///列表名字

@@ -1,9 +1,9 @@
 //!数据库操作
 #![allow(dead_code)]
-use anyhow::{Context,  Result}};
+use anyhow::{Result};
 
 use sled::{Db, Tree};
-use crate::model::{item::ItemData, list::TodoListData};
+use crate::model::{item::ItemData, list::ListData};
 
 
 pub struct Storage {
@@ -36,7 +36,7 @@ impl Storage {
     }
 
     ///保存或创建列表
-    pub fn save_or_new_list(&self, list: &TodoListData) -> Result<()> {
+    pub fn save_or_new_list(&self, list: &ListData) -> Result<()> {
         let id = list.id;
         let list = serde_json::to_vec(list)?;
         self.list_tree.insert(id.to_be_bytes(), list)?;
@@ -53,7 +53,7 @@ impl Storage {
     }
 
     ///获取所有列表
-    pub fn get_all_list(&self) -> Result<Vec<TodoListData>> {
+    pub fn get_all_list(&self) -> Result<Vec<ListData>> {
         let list = self.list_tree.iter()
             .map(|m| {
                 let (_, value) = m?;
@@ -76,7 +76,7 @@ impl Storage {
     }
 
     ///获取单个列表
-    pub fn get_a_list(&self, list_id: u64) -> Result<TodoListData> {
+    pub fn get_a_list(&self, list_id: u64) -> Result<ListData> {
         let list_id = list_id.to_be_bytes();
         let list = self.list_tree.get(list_id)?.unwrap();
         let list = serde_json::from_slice(&list)?;
@@ -84,10 +84,10 @@ impl Storage {
     }
     
     ///获取单个项
-    pub fn get_a_item(&self, item_id: (u64, u64)) {
+    pub fn get_a_item(&self, item_id: (u64, u64)) -> Result<ItemData> {
         let item_id = [item_id.0.to_be_bytes(), item_id.1.to_be_bytes()].concat();
         let item = self.item_tree.get(item_id)?.unwrap();
         let item = serde_json::from_slice(&item)?;
+        Ok(item)
     }
-    
 }
