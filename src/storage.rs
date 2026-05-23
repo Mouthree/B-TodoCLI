@@ -1,6 +1,6 @@
 //!数据库操作
 #![allow(dead_code)]
-use anyhow:: Result};
+use anyhow::{Context,  Result}};
 
 use sled::{Db, Tree};
 use crate::model::{item::ItemData, list::TodoListData};
@@ -66,7 +66,7 @@ impl Storage {
     ///获取列表中所有项
     pub fn get_item_from_list(&self, list_id: u64) -> Result<Vec<ItemData>> {
         let list_id = list_id.to_be_bytes();
-        let item = self.item_tree.iter()
+        let item = self.item_tree.scan_prefix(list_id)
             .map(|m| {
                 let (_, value) = m?;
                 Ok(serde_json::from_slice(&value)?)
@@ -75,5 +75,19 @@ impl Storage {
         item
     }
 
+    ///获取单个列表
+    pub fn get_a_list(&self, list_id: u64) -> Result<TodoListData> {
+        let list_id = list_id.to_be_bytes();
+        let list = self.list_tree.get(list_id)?.unwrap();
+        let list = serde_json::from_slice(&list)?;
+        Ok(list)
+    }
+    
+    ///获取单个项
+    pub fn get_a_item(&self, item_id: (u64, u64)) {
+        let item_id = [item_id.0.to_be_bytes(), item_id.1.to_be_bytes()].concat();
+        let item = self.item_tree.get(item_id)?.unwrap();
+        let item = serde_json::from_slice(&item)?;
+    }
     
 }
