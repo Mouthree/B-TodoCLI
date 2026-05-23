@@ -15,7 +15,6 @@ pub struct AppConfig {
     test: String
 }
 
-
 impl AppConfig {
     pub fn new() -> Result<Self> {
         info!("开始加载配置");
@@ -38,7 +37,6 @@ impl AppConfig {
             let default_config = AppConfig {
                 test: String::from("yeah")
             };
-            //序列化
             let toml_string = toml::to_string_pretty(&default_config)?;
             if let Some(parent) = config_file.parent() {
                 fs::create_dir_all(parent)
