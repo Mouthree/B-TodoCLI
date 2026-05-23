@@ -2,7 +2,7 @@
 #![allow(dead_code)]
 use anyhow::{Result};
 
-use sled::{Db, Tree};
+use sled::{Batch, Db, Tree};
 use crate::model::{item::ItemData, list::ListData};
 
 
@@ -24,7 +24,6 @@ impl Storage {
             }
         )
     }
-
     ///创建列表id
     pub fn create_id_list(&self) -> Result<u64> {
         Ok(self.db.generate_id()?)
@@ -90,4 +89,45 @@ impl Storage {
         let item = serde_json::from_slice(&item)?;
         Ok(item)
     }
+
+    ///删除一个列表
+    pub fn delete_list(&self, list_id: u64) -> Result<()> {
+        let list_id = list_id.to_be_bytes();
+        let mut batch = Batch::default();
+        for m in self.item_tree.scan_prefix(list_id) {
+            let (key, _) = m?;          
+            batch.remove(key);
+        }
+        self.item_tree.apply_batch(batch)?;
+        self.list_tree.remove(list_id)?;
+        Ok(())
+    }
+    
+    ///删除一个项
+    pub fn delete_item(&self, item_id: (u64, u64)) -> Result<()> {
+        let item_id = [item_id.0.to_be_bytes(), item_id.1.to_be_bytes()].concat();
+        self.item_tree.remove(item_id)?;
+        Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn setup_storage() -> Storage {
+        let dir = tempfile::tempdir().unwrap();
+        Storage::new(dir.path().to_str().expect("路径错误")).expect("数据库创建失败")
+    }
+
+    #[test]
+    fn test_create_id_list() {
+        let storage = setup_storage();
+        let id1 = storage.create_id_list().unwrap();
+        let id2 = storage.create_id_list().unwrap();
+        assert!(id2 > id1)
+    }
+
+    
+    
 }
