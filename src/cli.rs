@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 use clap::{Args, ValueEnum};
 use crate::cli::item::ItemArgs;
-use crate::cli::list::ListArgs;
+use crate::cli::new::NewCommand;
 mod change;
 mod del;
 mod hint;
@@ -40,11 +40,14 @@ enum Commands {
     ///查所有item
     Item(ItemArgs),
     ///增
-    New(NewCommands),
+    #[command(subcommand)]
+    New(NewCommand),
     ///删
-    Del(DelCommands),
+    #[command(subcommand)]
+    Del(DelCommand),
     ///改
-    Change(ChangeCommands),
+    #[command(subcommand)]
+    Change(ChangeCommand),
     ///保存本地存档
     Save,
     ///运行
