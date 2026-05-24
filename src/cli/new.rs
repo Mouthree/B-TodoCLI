@@ -3,9 +3,10 @@ use clap::{Args, Subcommand};
 ///公共的属性
 #[derive(Args, Debug)]
 pub struct CommonArgs {
+    #[arg(short, long, required = true)]
     pub name: String,
-    pub note: String,
-    
+    #[arg(short = 't', long)]
+    pub note: Option<String>, 
 }
 
 ///需要创建的类型
@@ -22,7 +23,25 @@ pub enum NewCommand {
 ///列表的属性
 #[derive(Args, Debug)]
 pub struct ListArgs {
-    
+    #[command(flatten)]
+    pub comm: CommonArgs,
+}
+
+///项的公共属性
+#[derive(Args, Debug)]
+pub struct ListCommonArgs {
+    ///添加到
+    #[arg(short, long, required = true)]
+    pub list: u64,
+    ///截止时间
+    #[arg(short, long = "ddl")]
+    pub dead_line: Option<i64>,
+    ///开始时间
+    #[arg(short, long = "start")]
+    pub start_time: Option<i64>,
+    ///优先级
+    #[arg(short, long = "pr")]
+    pub priority: Option<u8>,
 }
 
 ///项
@@ -37,11 +56,23 @@ pub enum ItemCommand {
 ///基础的属性
 #[derive(Args, Debug)]
 pub struct BasicArgs {
-    
+    #[command(flatten)]
+    pub comm: CommonArgs,
+    #[command(flatten)]
+    pub list_comm: ListCommonArgs
 }
 
 ///打开类型的属性
 #[derive(Args, Debug)]
 pub struct OpenArgs {
-    
+    #[command(flatten)]
+    pub comm: CommonArgs,
+    #[command(flatten)]
+    pub list_comm: ListCommonArgs,
+    ///需要打开的路径
+    #[arg(short, long, required = true)]
+    pub path: Vec<String>,
+    ///使用该软件打开
+    #[arg(short, long, required = true, num_args = 1..)]
+    pub exe: String
 }
