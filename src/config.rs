@@ -16,7 +16,7 @@ pub struct AppConfig {
 }
 impl AppConfig {
     pub fn new() -> Result<Self> {
-        let config_file = Self::set_config_file()?;
+        let config_file = Self::set_config_file(None)?;
 
         if config_file.is_file() {
             Self::get_local_config(&config_file)
@@ -31,10 +31,15 @@ impl AppConfig {
     }
 
     ///设置本地config路径
-    fn set_config_file() -> Result<PathBuf> {
-        let dirs = ProjectDirs::from("com", "MtrM", "mrTodo")
-            .context("无法确定用户配置目录")?;
-        let path = dirs.config_dir().join("config.toml");
+    fn set_config_file(path: Option<PathBuf>) -> Result<PathBuf> {
+        let path = if let Some(path) = path {
+            path.join("config.toml")
+        } else {
+            let dirs = ProjectDirs::from("com", "MtrM", "mrTodo")
+                .context("无法确定用户配置目录")?;
+            let path = dirs.config_dir().join("config.toml");
+            path
+        };
         info!("配置路径: {}", path.display());
         Ok(path)
     }
