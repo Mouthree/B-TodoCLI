@@ -76,11 +76,29 @@ impl AppConfig {
 
 impl Default for AppConfig {
     fn default() -> Self {
-        Self { test: Default::default() }
+        Self { 
+            test: String::from("test config")
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
-    
+    use tempfile::TempDir;
+    use super::*;
+
+    ///临时的目录
+    fn temp_dir() -> TempDir {
+        TempDir::new().expect("无法创建")
+    }
+
+    ///--set_config_file--
+    //测试该函数是否能根据输入的数据生成对应路径
+    #[test]
+    fn test_set_config_file() {
+        let tmp = temp_dir();
+        let result = AppConfig::set_config_file(Some(tmp.path().to_path_buf())).unwrap();
+        let expected = tmp.path().join("config.toml");
+        assert_eq!(result, expected);
+    }
 }

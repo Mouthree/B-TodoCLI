@@ -113,11 +113,12 @@ impl Storage {
 
 #[cfg(test)]
 mod tests {
+    use tempfile::tempdir;
     use super::*;
 
     fn setup_storage() -> Storage {
-        let dir = tempfile::tempdir().unwrap();
-        Storage::new(dir.path().to_str().expect("路径错误")).expect("数据库创建失败")
+        let path = tempdir().unwrap();
+        Storage::new(path.path().to_str().expect("路径错误")).expect("数据库创建失败")
     }
 
     #[test]
