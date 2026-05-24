@@ -3,8 +3,10 @@ use clap::{Args, Subcommand};
 ///公共的属性
 #[derive(Args, Debug)]
 pub struct CommonArgs {
+    ///名字
     #[arg(short, long, required = true)]
     pub name: String,
+    ///注释
     #[arg(short = 't', long)]
     pub note: Option<String>, 
 }
@@ -30,7 +32,7 @@ pub struct ListArgs {
 ///项的公共属性
 #[derive(Args, Debug)]
 pub struct ListCommonArgs {
-    ///添加到
+    ///要添加到的列表的id
     #[arg(short, long, required = true)]
     pub list: u64,
     ///截止时间
@@ -69,10 +71,10 @@ pub struct OpenArgs {
     pub comm: CommonArgs,
     #[command(flatten)]
     pub list_comm: ListCommonArgs,
-    ///需要打开的路径
+    ///待打开的路径
     #[arg(short, long, required = true)]
     pub path: Vec<String>,
-    ///使用该软件打开
+    ///用该软件打开
     #[arg(short, long, required = true, num_args = 1..)]
     pub exe: String
 }
