@@ -1,6 +1,6 @@
 //!数据库操作
 #![allow(dead_code)]
-use anyhow::{Result};
+use anyhow::{Result, anyhow};
 
 use sled::{Batch, Db, Tree};
 use crate::model::{item::ItemData, list::ListData};
@@ -77,15 +77,19 @@ impl Storage {
     ///获取单个列表
     pub fn get_a_list(&self, list_id: u64) -> Result<ListData> {
         let list_id = list_id.to_be_bytes();
-        let list = self.list_tree.get(list_id)?.unwrap();
+        let list = self.list_tree.get(list_id)?
+            .ok_or_else(|| anyhow!("列表 {} 不存在", u64::from_be_bytes(list_id)))?;
         let list = serde_json::from_slice(&list)?;
         Ok(list)
     }
     
     ///获取单个项
     pub fn get_a_item(&self, item_id: (u64, u64)) -> Result<ItemData> {
-        let item_id = [item_id.0.to_be_bytes(), item_id.1.to_be_bytes()].concat();
-        let item = self.item_tree.get(item_id)?.unwrap();
+        let item_key_bytes = [item_id.0.to_be_bytes(), item_id.1.to_be_bytes()].concat();
+        let item = self
+            .item_tree
+            .get(item_key_bytes)?
+            .ok_or_else(|| anyhow!("项{}|{}不存在", item_id.0, item_id.1))?;
         let item = serde_json::from_slice(&item)?;
         Ok(item)
     }
