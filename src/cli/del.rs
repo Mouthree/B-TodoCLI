@@ -3,8 +3,10 @@ use clap::{Args, Subcommand};
 ///删除指令
 #[derive(Subcommand, Debug)]
 pub enum DelCommand {
+    ///列表
     #[command(name = "l")]
     List(DelListArgs),
+    ///项
     #[command(name = "i")]
     Item(DelItemArgs),
 }

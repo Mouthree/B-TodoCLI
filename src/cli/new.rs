@@ -32,7 +32,7 @@ pub struct ListArgs {
 ///项的公共属性
 #[derive(Args, Debug)]
 pub struct ListCommonArgs {
-    ///要添加到的列表的id
+    ///添加到的列表的id
     #[arg(short, long, required = true)]
     pub list: u64,
     ///截止时间

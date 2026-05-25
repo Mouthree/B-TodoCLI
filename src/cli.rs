@@ -1,5 +1,7 @@
 use clap::{Parser, Subcommand};
 use clap::{Args, ValueEnum};
+use crate::cli::del::DelCommand;
+use crate::cli::hint::HintArgs;
 use crate::cli::item::ItemArgs;
 use crate::cli::new::NewCommand;
 mod change;
