@@ -27,9 +27,10 @@ pub struct ItemData {
 }
 
 ///项目完成情况
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
 pub enum CurrentState {
     ///未开始
+    #[default]
     NotStart,
     ///工作中
     Working,
@@ -48,7 +49,7 @@ pub enum ItemVariant {
     //可以实现自动化操作
     Open {
         ///需要打开的文件路径
-        open_file: String,
+        open_file: Vec<String>,
         ///使用的软件路径
         by_exe: String
     },
