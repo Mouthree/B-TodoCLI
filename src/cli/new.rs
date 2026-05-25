@@ -72,9 +72,9 @@ pub struct OpenArgs {
     #[command(flatten)]
     pub list_comm: ListCommonArgs,
     ///待打开的路径
-    #[arg(short, long, required = true)]
+    #[arg(short, long, required = true, num_args = 1..)]
     pub path: Vec<String>,
     ///用该软件打开
-    #[arg(short, long, required = true, num_args = 1..)]
+    #[arg(short, long, required = true)]
     pub exe: String
 }
