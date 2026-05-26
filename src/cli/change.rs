@@ -1,16 +1,19 @@
 use clap::{Args, Subcommand};
 
-///公共的属性
+//公共的属性
 #[derive(Args, Debug)]
 pub struct CommonChangeArgs {
+    ///待修改的id
+    #[arg(short, long, required = true)]
+    pub id: u64,
     ///名字
     #[arg(short, long)]
     pub name: Option<String>,
     ///注释
     #[arg(short = 't', long)]
-    pub note: Option<String>, 
+    pub note: Option<String>,
     ///优先级
-    #[arg(short, long)]
+    #[arg(long = "pri")]
     pub priority: Option<u8>
 }
 
@@ -22,7 +25,7 @@ pub enum ChangeCommand {
     List(ListArgs),
     ///项
     #[command(name = "i", subcommand)]
-    Item(ItemCommand)
+    Item(ItemCommand),
 }
 
 ///列表的属性
@@ -31,13 +34,14 @@ pub struct ListArgs {
     #[command(flatten)]
     pub comm: CommonChangeArgs,
     ///最近打开时间
+    #[arg(short, long)]
     pub last_open: Option<i64>,
     ///完成情况
+    #[arg(short, long)]
     pub current_state: Option<f64>,
-    
 }
 
-///项的公共属性
+//项的公共属性
 #[derive(Args, Debug)]
 pub struct ListCommonChangeArgs {
     ///添加到的列表的id
@@ -49,9 +53,6 @@ pub struct ListCommonChangeArgs {
     ///开始时间
     #[arg(short, long = "start")]
     pub start_time: Option<i64>,
-    ///优先级
-    #[arg(short, long = "pr")]
-    pub priority: Option<u8>,
 }
 
 ///项
@@ -60,7 +61,7 @@ pub enum ItemCommand {
     #[command(name = "b")]
     Basic(BasicArgs),
     #[command(name = "o")]
-    Open(OpenArgs)
+    Open(OpenArgs),
 }
 
 ///基础的属性
@@ -69,7 +70,7 @@ pub struct BasicArgs {
     #[command(flatten)]
     pub comm: CommonChangeArgs,
     #[command(flatten)]
-    pub list_comm: ListCommonChangeArgs
+    pub list_comm: ListCommonChangeArgs,
 }
 
 ///打开类型的属性
@@ -84,5 +85,5 @@ pub struct OpenArgs {
     pub open_file: Option<Vec<String>>,
     ///所使用软件
     #[arg(short, long)]
-    pub by_exe: Option<String>
+    pub by_exe: Option<String>,
 }
