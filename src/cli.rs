@@ -1,6 +1,7 @@
-use clap::{Parser, Subcommand};
+use anyhow::Result;
+use clap::{Command, Parser, Subcommand};
 use clap::{ValueEnum};
-use crate::cli::cd::CdArgs;
+use tracing::info;
 use crate::cli::change::ChangeCommand;
 use crate::cli::del::DelCommand;
 use crate::cli::hint::HintArgs;
@@ -12,11 +13,9 @@ mod del;
 mod hint;
 mod item;
 mod list;
-mod cd;
 mod save;
 mod run;
 mod new;
-
 
 ///根节点
 #[derive(Parser)]
@@ -24,21 +23,13 @@ struct Cli {
     #[command(subcommand)]
     command: Commands,
 
-    ///开启ai模式, 此情况下直接输入自然语言, 调用deepseek API来转为实际指令
-    #[arg(long, global=true)]
-    ai: bool,
-
     ///显示全部信息
     #[arg(long, global=true)]
     all: bool,
 
-    ///调用模式, 由别的软件调用来实现相关操作, 不输入则为循环模式
-    #[arg(long, global=true)]
-    tool: bool,
-
     ///排序方式
     #[arg(long, global=true)]
-    pub sort: Option<SortWay>
+    sort: Option<SortWay>
 }
 
 #[derive(Subcommand, Debug)]
@@ -62,10 +53,8 @@ enum Commands {
     Run(RunArgs),
     ///消息提醒
     Hint(HintArgs),
-    ///处理默认指令, ai处理的情况下该指令禁用
-    Cd(CdArgs),
-    ///进入TUI模式
-    Tui
+    ///测试指令
+    Test
 }
 
 #[derive(Debug, Clone, ValueEnum)]
@@ -78,4 +67,61 @@ pub enum SortWay {
     Priority
 }
 
-//TODO: 循环指令的话用一个栈来实现
+pub fn run(args: &str) -> Result<()> {
+    let mut args = shellwords::split(args)?;
+    args.insert(0, "".to_string());
+    let cli = match Cli::try_parse_from(args) {
+        Ok(c) => {
+            info!("输入解码成功");
+            c
+        },
+        Err(e) => {
+            eprint!("{e}");   // 只打印错误信息
+            info!("输入格式错误");
+            return Ok(());    // 不传播错误，继续循环
+        }
+    };
+    
+    match &cli.command {
+        Commands::Test => {
+            print_all_help::<Cli>();
+        },
+        Commands::List => {
+            //TODO: 添加用户友好输出, 就是输出表格的形式, 找找有什么库可以实现
+            //TODO: 查完之后要将映射后的表存起来, 方便直接输入012这样的序号进行后续的处理
+        },
+        Commands::Item(item_args) => todo!(),
+        Commands::New(new_command) => todo!(),
+        Commands::Del(del_command) => todo!(),
+        Commands::Change(change_command) => todo!(),
+        Commands::Save => todo!(),
+        Commands::Run(run_args) => todo!(),
+        Commands::Hint(hint_args) => todo!(),
+    }
+    Ok(())
+}
+
+
+fn print_recursive(cmd: &mut Command) {
+    // 打印当前命令的完整帮助（-h 只给摘要，--help 给完整版，这里用 print_long_help）
+    cmd.print_long_help().unwrap();
+    println!(); // 命令之间空行分隔，方便 AI 阅读
+
+    // 收集子命令名称，避免借用冲突
+    let names: Vec<String> = cmd
+        .get_subcommands()
+        .map(|sc| sc.get_name().to_owned())
+        .collect();
+
+    for name in names {
+        if let Some(mut sub) = cmd.find_subcommand_mut(&name) {
+            print_recursive(&mut sub);
+        }
+    }
+}
+
+/// 你可以直接调用的唯一接口：自动获取命令树并打印全部帮助
+pub fn print_all_help<C: Parser>() {
+    let mut cmd = C::command();
+    print_recursive(&mut cmd);
+}
