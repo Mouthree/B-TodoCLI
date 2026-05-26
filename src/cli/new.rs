@@ -8,7 +8,7 @@ pub struct CommonArgs {
     pub name: String,
     ///注释
     #[arg(short = 't', long)]
-    pub note: Option<String>, 
+    pub note: Option<String>,
 }
 
 ///需要创建的类型
@@ -19,7 +19,7 @@ pub enum NewCommand {
     List(ListArgs),
     ///项
     #[command(name = "i", subcommand)]
-    Item(ItemCommand)
+    Item(ItemCommand),
 }
 
 ///列表的属性
@@ -42,7 +42,7 @@ pub struct ListCommonArgs {
     #[arg(short, long = "start")]
     pub start_time: Option<i64>,
     ///优先级
-    #[arg(short, long = "pr")]
+    #[arg(long = "pri")]
     pub priority: Option<u8>,
 }
 
@@ -52,7 +52,7 @@ pub enum ItemCommand {
     #[command(name = "b")]
     Basic(BasicArgs),
     #[command(name = "o")]
-    Open(OpenArgs)
+    Open(OpenArgs),
 }
 
 ///基础的属性
@@ -61,7 +61,7 @@ pub struct BasicArgs {
     #[command(flatten)]
     pub comm: CommonArgs,
     #[command(flatten)]
-    pub list_comm: ListCommonArgs
+    pub list_comm: ListCommonArgs,
 }
 
 ///打开类型的属性
@@ -72,9 +72,9 @@ pub struct OpenArgs {
     #[command(flatten)]
     pub list_comm: ListCommonArgs,
     ///待打开的路径
-    #[arg(short, long, required = true, num_args = 1..)]
+    #[arg(long, required = true, num_args = 1..)]
     pub path: Vec<String>,
     ///用该软件打开
     #[arg(short, long, required = true)]
-    pub exe: String
+    pub exe: String,
 }
