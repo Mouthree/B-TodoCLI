@@ -44,9 +44,6 @@ pub struct ListArgs {
 //项的公共属性
 #[derive(Args, Debug)]
 pub struct ListCommonChangeArgs {
-    ///添加到的列表的id
-    #[arg(short, long)]
-    pub list: u64,
     ///截止时间
     #[arg(short, long = "ddl")]
     pub dead_line: Option<i64>,
@@ -63,6 +60,8 @@ pub enum ItemCommand {
     #[command(name = "o")]
     Open(OpenArgs),
 }
+
+//-----------下面均为项的字类------------
 
 ///基础的属性
 #[derive(Args, Debug)]
