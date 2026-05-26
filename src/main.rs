@@ -1,9 +1,10 @@
-use B_TodoCLI::config::AppConfig;
+use B_TodoCLI::{cli, config::AppConfig, start};
+use anyhow::Result;
 use tracing::info;
 
-fn main() {
+fn main() -> Result<()> {
     tracing_subscriber::fmt().pretty().init();
     info!("start");
-    println!("{:?}", AppConfig::new());
-    
+    start()?;
+    Ok(())
 }
