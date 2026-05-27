@@ -6,3 +6,4 @@ pub struct ItemArgs {
     #[arg(long, short, required = true)]
     pub id: u64,
 }
+ 

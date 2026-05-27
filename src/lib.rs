@@ -8,7 +8,8 @@ pub mod cli;
 pub mod storage;
 pub mod config;
 
-pub fn start() -> Result<()> {
+pub fn start(start_items: Option<String>) -> Result<()> {
+    
     let mut rl = DefaultEditor::new()?;
     let mut left_sign = "[  ]>> ";
     let mut ai_flag = false;
