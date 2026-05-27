@@ -5,10 +5,12 @@ use anyhow::Result;
 use tracing::info;
 
 fn main() -> Result<()> {
+    //启动调试
     tracing_subscriber::fmt().pretty().init();
-    let raw_args: Vec<String> = env::args().collect();
-    println!("{:?}", raw_args);
-    // info!("start");
-    // start()?;
+    //获取启动参数
+    let raw_args: Vec<String> = env::args().skip(1).collect();
+    let start_items = if raw_args.is_empty() {None} else {Some(raw_args.join(" "))};
+    info!("start");
+    start(start_items)?;
     Ok(())
 }

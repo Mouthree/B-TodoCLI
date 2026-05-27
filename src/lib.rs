@@ -9,7 +9,10 @@ pub mod storage;
 pub mod config;
 
 pub fn start(start_items: Option<String>) -> Result<()> {
-    
+    //有参数就执行一次, 没有就是循环执行
+    if let Some(input) = start_items {
+        return cli::run(&input);
+    }
     let mut rl = DefaultEditor::new()?;
     let mut left_sign = "[  ]>> ";
     let mut ai_flag = false;
@@ -17,7 +20,6 @@ pub fn start(start_items: Option<String>) -> Result<()> {
         let readline = rl.readline(left_sign);
         match readline {
             //TODO: 添加对基础指令的单独判断, 例如输入exit就退出, 输入exit ai就退出ai模式, cd指令整合到前面的判断
-            //TODO: 下面的这个对进入ai模式的判断是不是可以修改一下, 直接全部写到if后面感觉不好看, 然后进入的指令改成in ai或者直接ai, match判断
             Ok(line) => {
                 //如果输入是进入ai模式, 那么修改>>, 然后置标志位
                 match line.as_str() {
@@ -25,6 +27,9 @@ pub fn start(start_items: Option<String>) -> Result<()> {
                         left_sign = "[AI]>> ";
                         ai_flag = true;
                         continue;
+                    },
+                    "exit" => {
+                        break;
                     },
                     _ => {
                         
