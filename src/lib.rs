@@ -19,9 +19,8 @@ pub fn start(start_items: Option<String>) -> Result<()> {
     loop {
         let readline = rl.readline(left_sign);
         match readline {
-            //TODO: 添加对基础指令的单独判断, 例如输入exit就退出, 输入exit ai就退出ai模式, cd指令整合到前面的判断
             Ok(line) => {
-                //如果输入是进入ai模式, 那么修改>>, 然后置标志位
+                //基础指令
                 match line.as_str() {
                     "ai" => {
                         left_sign = "[AI]>> ";
@@ -30,6 +29,11 @@ pub fn start(start_items: Option<String>) -> Result<()> {
                     },
                     "exit" => {
                         break;
+                    },
+                    "exit ai" => {
+                        left_sign = "[  ]>> ";
+                        ai_flag = false;
+                        continue;
                     },
                     _ => {
                         
