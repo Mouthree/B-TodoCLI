@@ -18,5 +18,5 @@ struct Message {
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 struct EnableType {
-    
+    type: String
 }
