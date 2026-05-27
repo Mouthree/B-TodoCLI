@@ -7,6 +7,7 @@ pub mod model;
 pub mod cli;
 pub mod storage;
 pub mod config;
+pub mod ai;
 
 pub fn start(start_items: Option<String>) -> Result<()> {
     //有参数就执行一次, 没有就是循环执行
@@ -36,7 +37,7 @@ pub fn start(start_items: Option<String>) -> Result<()> {
                         continue;
                     },
                     _ => {
-                        
+                        println!("未定义行为")
                     }
                 }
                 //如果是ai模式那么需要将输入给到ai然后返回的结果作为参数传入cli中
