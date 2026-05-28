@@ -14,6 +14,7 @@ pub fn start(start_items: Option<String>) -> Result<()> {
     if let Some(input) = start_items {
         return cli::run(&input);
     }
+    //获取输入行
     let mut rl = DefaultEditor::new()?;
     let mut left_sign = "[  ]>> ";
     let mut ai_flag = false;

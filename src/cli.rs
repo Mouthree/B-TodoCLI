@@ -68,7 +68,9 @@ pub enum SortWay {
 }
 
 pub fn run(args: &str) -> Result<()> {
+    //切割输入
     let mut args = shellwords::split(args)?;
+    //第一个给空, 默认第一个是给程序名留着的
     args.insert(0, "".to_string());
     let cli = match Cli::try_parse_from(args) {
         Ok(c) => {
@@ -76,9 +78,9 @@ pub fn run(args: &str) -> Result<()> {
             c
         },
         Err(e) => {
-            eprint!("{e}");   // 只打印错误信息
+            eprint!("{e}");
             info!("输入格式错误");
-            return Ok(());    // 不传播错误，继续循环
+            return Ok(());
         }
     };
     
