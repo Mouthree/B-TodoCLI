@@ -9,7 +9,7 @@ pub struct ChatRequest {
     pub messages: Vec<Message>,
     pub stream: bool,
     pub thinking: EnableType,
-    pub reasoning_effort: String,
+    //pub reasoning_effort: String,
 }
 
 ///系统提示词和用户输入
@@ -38,7 +38,7 @@ impl ChatRequest {
             thinking: EnableType {
                 enable_type: "disabled".to_string(),
             },
-            reasoning_effort: "high".to_string(),
+            //reasoning_effort: "high".to_string(),
         }
     }
 
