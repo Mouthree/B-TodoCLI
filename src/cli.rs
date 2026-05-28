@@ -87,7 +87,7 @@ pub fn run(args: &str) -> Result<()> {
     match &cli.command {
         Commands::Test => {
             //print_all_help::<Cli>();
-            println!("yeah")
+            
         },
         Commands::List => {
             //TODO: 添加用户友好输出, 就是输出表格的形式, 找找有什么库可以实现
