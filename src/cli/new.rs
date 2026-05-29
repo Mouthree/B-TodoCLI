@@ -49,8 +49,10 @@ pub struct ListCommonArgs {
 ///项
 #[derive(Debug, Subcommand)]
 pub enum ItemCommand {
+    ///基础项
     #[command(name = "b")]
     Basic(BasicArgs),
+    ///打开文件的项
     #[command(name = "o")]
     Open(OpenArgs),
 }

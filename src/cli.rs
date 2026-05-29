@@ -36,7 +36,7 @@ struct Cli {
 enum Commands {
     ///查所有list
     List,
-    ///查所有item
+    ///查指定list下所有item
     Item(ItemArgs),
     ///增
     #[command(subcommand)]
@@ -57,6 +57,7 @@ enum Commands {
     Test
 }
 
+///排序方式
 #[derive(Debug, Clone, ValueEnum)]
 pub enum SortWay {
     ///时间排序
