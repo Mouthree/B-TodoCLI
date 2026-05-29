@@ -1,6 +1,6 @@
 use std::env;
 
-use B_TodoCLI::{start};
+use B_TodoCLI::{config::CONFIG, start};
 use anyhow::Result;
 use tracing::info;
 
@@ -12,6 +12,7 @@ async fn main() -> Result<()> {
     let raw_args: Vec<String> = env::args().skip(1).collect();
     let start_items = if raw_args.is_empty() {None} else {Some(raw_args.join(" "))};
     info!("start");
+    println!("{:?}", &CONFIG.test);
     start(start_items).await?;
     Ok(())
 }

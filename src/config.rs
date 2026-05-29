@@ -1,23 +1,29 @@
 //!配置文件管理
 #![allow(dead_code)]
-use std::{fs::{self}, path::PathBuf};
+use std::{fs::{self}, path::PathBuf, sync::LazyLock};
 
 use anyhow::{Context, Result};
 use directories::ProjectDirs;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
+///获取到的配置设置为全局的
+pub static CONFIG: LazyLock<AppConfig> = LazyLock::new(|| {
+    AppConfig::new().unwrap()
+});
+
 
 
 ///主配置
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AppConfig {
-    test: String
+    pub test: String,
+    pub api_key: String
 }
 impl AppConfig {
+    ///初始化配置, 如果找不到则重新创建一个
     pub fn new() -> Result<Self> {
         let config_file = Self::set_config_file(None)?;
-
         if config_file.is_file() {
             Self::get_local_config(&config_file)
         } else {
@@ -74,10 +80,12 @@ impl AppConfig {
     }
 }
 
+///创建默认的AppConfig
 impl Default for AppConfig {
     fn default() -> Self {
         Self { 
-            test: String::from("test config")
+            test: String::from("test config"),
+            api_key: String::from("")
         }
     }
 }

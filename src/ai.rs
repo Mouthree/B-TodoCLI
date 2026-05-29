@@ -1,6 +1,7 @@
 use anyhow::Result;
 use reqwest::Client;
 use serde::{Deserialize, Serialize};
+use tracing::info;
 
 ///传给deepseek的json
 #[derive(Serialize)]
@@ -32,7 +33,7 @@ impl ChatRequest {
             model: "deepseek-v4-flash".to_string(),
             messages: vec![Message {
                 role: "system".to_string(),
-                content: "你是一个ai助手".to_string(),
+                content: "".to_string(),
             }],
             stream: false,
             thinking: EnableType {
@@ -75,7 +76,6 @@ impl DeepseekRequest {
 
     ///调用整个的网址(这个负责调用api获取结果)
     pub async fn send_to_ds(&self, req: &mut ChatRequest) -> Result<String> {
-        //TODO: 拼接链接然后发送
         let reqwest = self
             .clone()
             .client
@@ -86,7 +86,9 @@ impl DeepseekRequest {
             .send()
             .await?;
         let output: serde_json::Value = reqwest.json().await?;
-        println!("{:?}", output);
-        Ok("test".to_string())
+        let output = output["choices"][0]["message"]["content"].as_str().unwrap_or("AI 无回复").to_string();
+        info!("输出保存到json中");
+        req.insert_ai_output(&output);
+        Ok(output)
     }
 }

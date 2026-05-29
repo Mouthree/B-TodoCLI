@@ -4,7 +4,7 @@ use anyhow::Result;
 use rustyline::{DefaultEditor, error::ReadlineError};
 use tracing::info;
 
-use crate::ai::{ChatRequest, DeepseekRequest};
+use crate::{ai::{ChatRequest, DeepseekRequest}, config::CONFIG};
 
 pub mod model;
 pub mod cli;
@@ -13,6 +13,7 @@ pub mod config;
 pub mod ai;
 
 pub async fn start(start_items: Option<String>) -> Result<()> {
+    
     //有参数就执行一次, 没有就是循环执行
     if let Some(input) = start_items {
         return cli::run(&input);
@@ -21,8 +22,14 @@ pub async fn start(start_items: Option<String>) -> Result<()> {
     let mut rl = DefaultEditor::new()?;
     let mut left_sign = "[  ]>> ";
     let mut ai_flag = false;
+    //ai相关数据
+    let mut cr = ChatRequest::new();
+    let api_key = &CONFIG.api_key;
+    let deep = DeepseekRequest::new(api_key.to_owned());
+    let mut output = String::new();
+    
     loop {
-        let readline = rl.readline(left_sign);
+        let readline = rl.readline_with_initial(left_sign, (&output, ""));
         match readline {
             Ok(line) => {
                 //基础指令
@@ -33,10 +40,10 @@ pub async fn start(start_items: Option<String>) -> Result<()> {
                         ai_flag = true;
                         continue;
                     },
-                    "exit" => {
+                    "exit" | "e" => {
                         break;
                     },
-                    "exit ai" => {
+                    "exit ai" | "e ai" => {
                         left_sign = "[  ]>> ";
                         ai_flag = false;
                         continue;
@@ -47,12 +54,11 @@ pub async fn start(start_items: Option<String>) -> Result<()> {
                 }
                 //如果是ai模式那么需要将输入给到ai然后返回的结果作为参数传入cli中
                 if ai_flag {
-                    let mut cr = ChatRequest::new();
-                    let api_key = "sk-a35a1fc4524c41be99498c4264a49416";
-                    let deep = DeepseekRequest::new(api_key.to_owned());
-                    cr.insert_user_input("现在进行一下测试, 随便输出一些什么");
-                    deep.send_to_ds(&mut cr).await?;
-                    return Ok(());
+                    info!("传给ai进行处理");
+                    cr.insert_user_input(line.as_str());
+                    info!("向ds发送");
+                    output = deep.send_to_ds(&mut cr).await?;
+                    continue;
                 }
                 //执行一次
                 if let Err(e) = cli::run(&line) {
