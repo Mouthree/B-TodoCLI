@@ -1,9 +1,9 @@
 use clap::{Args, Subcommand};
 
-//公共的属性
+///公共属性（列表和项通用）
 #[derive(Args, Debug)]
 pub struct CommonChangeArgs {
-    ///待修改的id
+    ///待修改的 id
     #[arg(short, long, required = true)]
     pub id: u64,
     ///名字
@@ -14,10 +14,10 @@ pub struct CommonChangeArgs {
     pub note: Option<String>,
     ///优先级
     #[arg(long = "pri")]
-    pub priority: Option<u8>
+    pub priority: Option<u8>,
 }
 
-///需要创建的类型
+///修改列表或项
 #[derive(Subcommand, Debug)]
 pub enum ChangeCommand {
     ///列表
@@ -28,7 +28,7 @@ pub enum ChangeCommand {
     Item(ItemCommand),
 }
 
-///列表的属性
+///修改列表
 #[derive(Args, Debug)]
 pub struct ListArgs {
     #[command(flatten)]
@@ -41,9 +41,22 @@ pub struct ListArgs {
     pub current_state: Option<f64>,
 }
 
-//项的公共属性
+///修改项
+#[derive(Debug, Subcommand)]
+pub enum ItemCommand {
+    ///基本项
+    #[command(name = "b")]
+    Basic(BasicArgs),
+    ///打开项
+    #[command(name = "o")]
+    Open(OpenArgs),
+}
+
+///修改基本项
 #[derive(Args, Debug)]
-pub struct ListCommonChangeArgs {
+pub struct BasicArgs {
+    #[command(flatten)]
+    pub comm: CommonChangeArgs,
     ///截止时间
     #[arg(short, long = "ddl")]
     pub dead_line: Option<i64>,
@@ -52,33 +65,17 @@ pub struct ListCommonChangeArgs {
     pub start_time: Option<i64>,
 }
 
-///项
-#[derive(Debug, Subcommand)]
-pub enum ItemCommand {
-    #[command(name = "b")]
-    Basic(BasicArgs),
-    #[command(name = "o")]
-    Open(OpenArgs),
-}
-
-//-----------下面均为项的字类------------
-
-///基础的属性
-#[derive(Args, Debug)]
-pub struct BasicArgs {
-    #[command(flatten)]
-    pub comm: CommonChangeArgs,
-    #[command(flatten)]
-    pub list_comm: ListCommonChangeArgs,
-}
-
-///打开类型的属性
+///修改打开项
 #[derive(Args, Debug)]
 pub struct OpenArgs {
     #[command(flatten)]
     pub comm: CommonChangeArgs,
-    #[command(flatten)]
-    pub list_comm: ListCommonChangeArgs,
+    ///截止时间
+    #[arg(short, long = "ddl")]
+    pub dead_line: Option<i64>,
+    ///开始时间
+    #[arg(short, long = "start")]
+    pub start_time: Option<i64>,
     ///待打开路径
     #[arg(short, long)]
     pub open_file: Option<Vec<String>>,
