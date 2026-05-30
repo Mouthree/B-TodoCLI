@@ -128,3 +128,10 @@ pub fn print_all_help<C: Parser>() {
     let mut cmd = C::command();
     print_recursive(&mut cmd);
 }
+
+///判断是否是有效指令
+pub fn is_valid_command(args: &str) -> Result<bool> {
+    let mut args = shellwords::split(args)?;
+    args.insert(0, "".to_string());
+    Ok(Cli::try_parse_from(args).is_ok())
+}

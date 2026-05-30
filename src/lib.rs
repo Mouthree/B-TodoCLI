@@ -4,7 +4,7 @@ use anyhow::Result;
 use rustyline::{DefaultEditor, error::ReadlineError};
 use tracing::info;
 
-use crate::{ai::{ChatRequest, DeepseekRequest}, config::CONFIG};
+use crate::{ai::{ChatRequest, DeepseekRequest}, cli::is_valid_command, config::CONFIG};
 
 pub mod model;
 pub mod cli;
@@ -22,8 +22,8 @@ pub async fn start(start_items: Option<String>) -> Result<()> {
     let mut rl = DefaultEditor::new()?;
     let mut left_sign = "[  ]>> ";
     let mut ai_flag = false;
+    
     //ai相关数据
-
     //系统提示词
     let t = "
         根据下面的提示, 来将我输入的需求转化为指令返回, 只需要返回指令就行
@@ -618,9 +618,6 @@ pub async fn start(start_items: Option<String>) -> Result<()> {
     let api_key = &CONFIG.api_key;
     let deep = DeepseekRequest::new(api_key.to_owned());
     let mut output = String::from("");
-
-    //运行一次之后暂时停止ai输入, 直接传递给cli处理部分, 处理后再置true
-    let mut one_message = false;
     
     loop {
         let readline = rl.readline_with_initial(left_sign, (&output, ""));
@@ -632,7 +629,6 @@ pub async fn start(start_items: Option<String>) -> Result<()> {
                     "ai" => {
                         left_sign = "[AI]>> ";
                         ai_flag = true;
-                        one_message = true;
                         continue;
                     },
                     "exit" | "e" => {
@@ -643,29 +639,27 @@ pub async fn start(start_items: Option<String>) -> Result<()> {
                         ai_flag = false;
                         continue;
                     },
-                    //当输入被清空的时候重新获取ai输出
-                    "" => {
-                        one_message = true;
-                        continue;
-                    },
                     _ => {
                         
                     }
                 }
-                //如果是ai模式那么需要将输入给到ai然后返回的结果作为参数传入cli中
-                if ai_flag && one_message {
-                    info!("传给ai进行处理");
-                    cr.insert_user_input(line.as_str());
-                    info!("向ds发送");
-                    output = deep.send_to_ds(&mut cr).await?;
-                    one_message = false;
-                    continue;
-                }
-                //执行一次
-                if let Err(e) = cli::run(&line) {
-                    eprintln!("错误: {e}");   // 打印错误但不退出
+
+                //判断是否为指令
+                if is_valid_command(line.as_str())? {
+                    //执行一次
+                    info!("是指令");
+                    if let Err(e) = cli::run(&line) {
+                        eprintln!("错误: {e}");   // 打印错误但不退出
+                    }
+                } else {
+                    info!("需要传给ai");
+                    //如果是ai模式那么需要将输入给到ai然后返回的结果作为参数传入cli中
                     if ai_flag {
-                        one_message = true;
+                        info!("传给ai进行处理");
+                        cr.insert_user_input(line.as_str());
+                        info!("向ds发送");
+                        output = deep.send_to_ds(&mut cr).await?;
+                        continue;
                     }
                 }
                 output = String::from("");
