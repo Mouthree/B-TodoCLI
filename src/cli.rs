@@ -84,7 +84,7 @@ pub fn run(args: &str) -> Result<()> {
             return Ok(());
         }
     };
-    
+    //TODO: 如果输出是结果的话交给ai让ai整理后输出
     match &cli.command {
         Commands::Test => {
             print_all_help::<Cli>();

@@ -28,12 +28,12 @@ pub struct EnableType {
 }
 
 impl ChatRequest {
-    pub fn new() -> Self {
+    pub fn new(mode: &str) -> Self {
         ChatRequest {
             model: "deepseek-v4-flash".to_string(),
             messages: vec![Message {
                 role: "system".to_string(),
-                content: "".to_string(),
+                content: mode.to_string(),
             }],
             stream: false,
             thinking: EnableType {
