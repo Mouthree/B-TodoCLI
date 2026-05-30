@@ -29,7 +29,11 @@ impl AppConfig {
             Self::get_local_config(&config_file)
         } else {
             info!("未找到配置文件，创建默认配置");
-            let default_config = AppConfig::default();
+            let default_config = AppConfig {
+                test: todo!(),
+                api_key: todo!(),
+                db_path: todo!(),
+            };
             let toml_string = toml::to_string_pretty(&default_config)?;
             Self::create_default_config_path(&config_file)?;
             Self::write_default_config_file(&config_file, toml_string)?;
@@ -81,16 +85,6 @@ impl AppConfig {
     }
 }
 
-///创建默认的AppConfig
-impl Default for AppConfig {
-    fn default(path: &str) -> Self {
-        Self { 
-            test: String::from("test config"),
-            api_key: String::from(""),
-            db_path: String::from(""),
-        }
-    }
-}
 
 #[cfg(test)]
 mod tests {
