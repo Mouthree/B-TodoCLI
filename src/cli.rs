@@ -1,3 +1,5 @@
+use std::sync::LazyLock;
+
 use anyhow::Result;
 use clap::{Command, Parser, Subcommand};
 use clap::{ValueEnum};
@@ -8,6 +10,8 @@ use crate::cli::hint::HintArgs;
 use crate::cli::item::ItemArgs;
 use crate::cli::new::NewCommand;
 use crate::cli::run::RunArgs;
+use crate::config::{AppConfig, CONFIG};
+use crate::storage::Storage;
 mod change;
 mod del;
 mod hint;
@@ -16,6 +20,12 @@ mod list;
 mod save;
 mod run;
 mod new;
+
+pub static STORAGE: LazyLock<AppConfig> = LazyLock::new(|| {
+   Storage::new(&CONFIG); 
+});
+
+
 
 ///根节点
 #[derive(Parser)]
@@ -84,14 +94,18 @@ pub fn run(args: &str) -> Result<()> {
             return Ok(());
         }
     };
+
+    //数据库相关
+    
     //TODO: 如果输出是结果的话交给ai让ai整理后输出
     match &cli.command {
         Commands::Test => {
             print_all_help::<Cli>();
         },
         Commands::List => {
-            //TODO: 添加用户友好输出, 就是输出表格的形式, 找找有什么库可以实现
+            //TODO: 添加用户友好输出,传给ai让ai来处理
             //TODO: 查完之后要将映射后的表存起来, 方便直接输入012这样的序号进行后续的处理
+            
         },
         Commands::Item(item_args) => todo!(),
         Commands::New(new_command) => todo!(),

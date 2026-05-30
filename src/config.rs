@@ -18,7 +18,8 @@ pub static CONFIG: LazyLock<AppConfig> = LazyLock::new(|| {
 #[derive(Debug, Deserialize, Serialize)]
 pub struct AppConfig {
     pub test: String,
-    pub api_key: String
+    pub api_key: String,
+    pub db_path: String
 }
 impl AppConfig {
     ///初始化配置, 如果找不到则重新创建一个
@@ -82,10 +83,11 @@ impl AppConfig {
 
 ///创建默认的AppConfig
 impl Default for AppConfig {
-    fn default() -> Self {
+    fn default(path: &str) -> Self {
         Self { 
             test: String::from("test config"),
-            api_key: String::from("")
+            api_key: String::from(""),
+            db_path: String::from(""),
         }
     }
 }

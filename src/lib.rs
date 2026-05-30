@@ -627,6 +627,10 @@ pub async fn start(start_items: Option<String>) -> Result<()> {
                 //TODO: 多指令同时运行, xxxx | xxxxx | xxxxx 这样
                 match line.as_str() {
                     "ai" => {
+                        if api_key.is_empty() {
+                            println!("未设置api key");
+                            continue;
+                        }
                         left_sign = "[AI]>> ";
                         ai_flag = true;
                         continue;
